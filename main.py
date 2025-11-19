@@ -5,6 +5,10 @@ from typing import Any, Dict, List, Optional
 import requests
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+
+# Load environment variables from .env if present
+load_dotenv()
 
 app = FastAPI(title="UNBEQUEM/BEQUEM API")
 
@@ -91,6 +95,10 @@ def _cache_set(key: str, data: Any) -> None:
 
 
 def _ensure_api_key():
+    # Re-read in case environment changed after startup (e.g., on server restart)
+    global YOUTUBE_API_KEY
+    if not YOUTUBE_API_KEY:
+        YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
     if not YOUTUBE_API_KEY:
         return False
     return True
